@@ -22,6 +22,9 @@ public class Alert {
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
+    @Column(name = "resolved_at")
+    private OffsetDateTime resolvedAt;
+
     public Alert(BigDecimal sessionId) {
         this.sessionId = sessionId;
         this.createdAt = OffsetDateTime.now();
@@ -49,6 +52,14 @@ public class Alert {
 
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void setResolvedAt(OffsetDateTime resolvedAt) {
+        this.resolvedAt = resolvedAt;
     }
 
     @Override

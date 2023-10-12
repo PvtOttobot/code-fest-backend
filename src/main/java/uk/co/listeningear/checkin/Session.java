@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
@@ -126,6 +127,7 @@ public class Session {
     }
 
     @PrePersist
+    @PreUpdate
     public void prePersist() {
         if (status != null) {
             statusValue = status.getInternalValue();
@@ -148,9 +150,11 @@ public class Session {
     }
 
     public enum Status {
+
         SCHEDULED("Scheduled"),
         IN_PROGRESS("In progress"),
-        COMPLETED("Completed");
+        COMPLETED("Completed"),
+        CANCELLED("Cancelled");
 
         private final String internalValue;
 

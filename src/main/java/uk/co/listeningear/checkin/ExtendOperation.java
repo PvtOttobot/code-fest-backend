@@ -23,7 +23,7 @@ public class ExtendOperation {
         if (session.getStatus() != Session.Status.IN_PROGRESS)
             throw new SessionOperationException("Invalid status: " + session.getStatus());
 
-        session.setEndedAt(session.getExpectedEnd().plusMinutes(minutesToExtend));
+        session.setExpectedEnd(session.getExpectedEnd().plusMinutes(minutesToExtend));
         sessionRepository.save(session);
         updatePusher.notifyUpdates(session.getAdminId());
     }

@@ -40,7 +40,7 @@ public class SessionController {
     }
 
     @PostMapping(value = "/{id}/extend/{minutes}")
-    public ResponseEntity<Void> extend(@PathVariable BigDecimal id, long minutes) throws SessionOperationException {
+    public ResponseEntity<Void> extend(@PathVariable BigDecimal id, @PathVariable long minutes) throws SessionOperationException {
         extendOperation.execute(id, minutes);
         return ResponseEntity.noContent().build();
     }
