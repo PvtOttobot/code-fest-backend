@@ -3,9 +3,13 @@ package uk.co.listeningear.checkin;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.stream.Stream;
 
 @Entity
 public class Session {
@@ -13,26 +17,30 @@ public class Session {
     @Id
     private BigDecimal id;
 
-    @Column(name="therapist_id")
+    @Column(name = "therapist_id")
     private BigDecimal therapistId;
 
-    @Column(name="admin_id")
+    @Column(name = "admin_id")
     private BigDecimal adminId;
 
-    private String status;
+    @Column(name = "status")
+    private String statusValue;
+
+    @Transient
+    private Status status;
 
     private String location;
 
-    @Column(name="expected_start")
+    @Column(name = "expected_start")
     private OffsetDateTime expectedStart;
 
-    @Column(name="expected_end")
+    @Column(name = "expected_end")
     private OffsetDateTime expectedEnd;
 
-    @Column(name="started_at")
+    @Column(name = "started_at")
     private OffsetDateTime startedAt;
 
-    @Column(name="ended_at")
+    @Column(name = "ended_at")
     private OffsetDateTime endedAt;
 
     public BigDecimal getId() {
@@ -59,11 +67,11 @@ public class Session {
         this.adminId = adminId;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -105,6 +113,58 @@ public class Session {
 
     public void setEndedAt(OffsetDateTime endedAt) {
         this.endedAt = endedAt;
+    }
+
+    @PostLoad
+    public void postLoad() {
+        if (statusValue != null) {
+            status = Status.fromInternalValue(statusValue);
+        }
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (status != null) {
+            statusValue = status.getInternalValue();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+               "id=" + id +
+               ", therapistId=" + therapistId +
+               ", adminId=" + adminId +
+               ", status='" + status + '\'' +
+               ", location='" + location + '\'' +
+               ", expectedStart=" + expectedStart +
+               ", expectedEnd=" + expectedEnd +
+               ", startedAt=" + startedAt +
+               ", endedAt=" + endedAt +
+               '}';
+    }
+
+    public enum Status {
+        SCHEDULED("Scheduled"),
+        IN_PROGRESS("In progress"),
+        COMPLETED("Completed");
+
+        private final String internalValue;
+
+        Status(String internalValue) {
+            this.internalValue = internalValue;
+        }
+
+        private String getInternalValue() {
+            return internalValue;
+        }
+
+        private static Status fromInternalValue(String internalValue) {
+            return Stream.of(Status.values())
+                    .filter(status -> status.getInternalValue().equals(internalValue))
+                    .findFirst()
+                    .orElseThrow(IllegalArgumentException::new);
+        }
     }
 
 }

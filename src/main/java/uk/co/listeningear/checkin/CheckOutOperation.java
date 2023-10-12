@@ -20,7 +20,7 @@ public class CheckOutOperation {
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
-        session.setStatus("inactive");
+        session.setStatus(Session.Status.COMPLETED);
         session.setEndedAt(OffsetDateTime.now());
         sessionRepository.save(session);
         updatePusher.notifyUpdates(session.getAdminId());

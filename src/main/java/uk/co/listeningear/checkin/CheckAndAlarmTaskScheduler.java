@@ -1,13 +1,11 @@
 package uk.co.listeningear.checkin;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class CheckAndAlarmTaskScheduler {
@@ -15,19 +13,22 @@ public class CheckAndAlarmTaskScheduler {
     private final SessionRepository sessionRepository;
     private final AlarmOperation alarmOperation;
     private final TaskScheduler checkAndAlarmTaskScheduler;
+    private final long minutesAlarmBuffer;
 
     public CheckAndAlarmTaskScheduler(SessionRepository sessionRepository,
                                       AlarmOperation alarmOperation,
-                                      TaskScheduler checkAndAlarmTaskScheduler) {
+                                      TaskScheduler checkAndAlarmTaskScheduler,
+                                      @Value("${alarm.buffer.mins:0}") long minutesAlarmBuffer) {
 
         this.sessionRepository = sessionRepository;
         this.alarmOperation = alarmOperation;
         this.checkAndAlarmTaskScheduler = checkAndAlarmTaskScheduler;
+        this.minutesAlarmBuffer = minutesAlarmBuffer;
     }
 
     public void scheduleForId(BigDecimal id, OffsetDateTime triggerTime) {
         checkAndAlarmTaskScheduler.schedule(new CheckAndAlarmTask(id),
-                                            triggerTime.toInstant());
+                                            triggerTime.plusMinutes(minutesAlarmBuffer).toInstant());
     }
 
     private class CheckAndAlarmTask implements Runnable {
@@ -42,14 +43,13 @@ public class CheckAndAlarmTaskScheduler {
         public void run() {
             Session session = sessionRepository.getReferenceById(sessionId);
 
-            if (session.getStatus().equals("inactive"))
+            if (session.getStatus() != Session.Status.IN_PROGRESS)
                 return;
 
             if (session.getExpectedEnd().isAfter(OffsetDateTime.now())) {
                 scheduleForId(sessionId, session.getExpectedEnd());
             }
 
-            // TODO: buffer time?
             try {
                 alarmOperation.execute(sessionId);
             } catch (SessionOperationException e) {

@@ -22,7 +22,7 @@ public class CheckInOperation {
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
-        session.setStatus("active");
+        session.setStatus(Session.Status.IN_PROGRESS);
         session.setStartedAt(OffsetDateTime.now());
         sessionRepository.save(session);
         updatePusher.notifyUpdates(session.getAdminId());
