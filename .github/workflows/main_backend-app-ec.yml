@@ -50,4 +50,4 @@ jobs:
           app-name: 'backend-app-ec'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E946219F6E264479B8D68E8259099F60 }}
-          package: '*.war'
+          package: '*.jar'
