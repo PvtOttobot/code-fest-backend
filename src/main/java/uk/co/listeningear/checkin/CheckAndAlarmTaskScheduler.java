@@ -1,20 +1,24 @@
 package uk.co.listeningear.checkin;
 
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class CheckAndAlarmTaskScheduler {
 
     private final SessionRepository sessionRepository;
-    private final SessionOperation alarmOperation;
-    private final ScheduledExecutorService checkAndAlarmTaskScheduler;
+    private final AlarmOperation alarmOperation;
+    private final TaskScheduler checkAndAlarmTaskScheduler;
 
     public CheckAndAlarmTaskScheduler(SessionRepository sessionRepository,
-                                      SessionOperation alarmOperation,
-                                      ScheduledExecutorService checkAndAlarmTaskScheduler) {
+                                      AlarmOperation alarmOperation,
+                                      TaskScheduler checkAndAlarmTaskScheduler) {
 
         this.sessionRepository = sessionRepository;
         this.alarmOperation = alarmOperation;
@@ -23,8 +27,7 @@ public class CheckAndAlarmTaskScheduler {
 
     public void scheduleForId(BigDecimal id, OffsetDateTime triggerTime) {
         checkAndAlarmTaskScheduler.schedule(new CheckAndAlarmTask(id),
-                                            ChronoUnit.MINUTES.between(OffsetDateTime.now(), triggerTime),
-                                            TimeUnit.MINUTES);
+                                            triggerTime.toInstant());
     }
 
     private class CheckAndAlarmTask implements Runnable {
