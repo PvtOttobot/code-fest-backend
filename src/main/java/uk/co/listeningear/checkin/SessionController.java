@@ -5,15 +5,15 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class SessionController {
 
-    private final SessionOperation checkInOperation;
-    private final SessionOperation checkOutOperation;
-    private final SessionOperation extendOperation;
-    private final SessionOperation alarmOperation;
+    private final CheckInOperation checkInOperation;
+    private final CheckOutOperation checkOutOperation;
+    private final ExtendOperation extendOperation;
+    private final AlarmOperation alarmOperation;
 
-    public SessionController(SessionOperation checkInOperation,
-                             SessionOperation checkOutOperation,
-                             SessionOperation extendOperation,
-                             SessionOperation alarmOperation) {
+    public SessionController(CheckInOperation checkInOperation,
+                             CheckOutOperation checkOutOperation,
+                             ExtendOperation extendOperation,
+                             AlarmOperation alarmOperation) {
         this.checkInOperation = checkInOperation;
         this.checkOutOperation = checkOutOperation;
         this.extendOperation = extendOperation;

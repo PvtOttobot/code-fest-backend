@@ -27,23 +27,30 @@ public class CheckAndAlarmTaskScheduler {
                                             TimeUnit.MINUTES);
     }
 
-    class CheckAndAlarmTask implements Runnable {
+    private class CheckAndAlarmTask implements Runnable {
 
         private final BigDecimal sessionId;
 
-        CheckAndAlarmTask(BigDecimal sessionId) {
+        private CheckAndAlarmTask(BigDecimal sessionId) {
             this.sessionId = sessionId;
         }
 
         @Override
         public void run() {
             Session session = sessionRepository.getReferenceById(sessionId);
-            if (session.getStatus().equals("active") && session.getExpectedEnd().isBefore(OffsetDateTime.now())) {
-                try {
-                    alarmOperation.execute(sessionId);
-                } catch (SessionOperationException e) {
-                    throw new RuntimeException(e);
-                }
+
+            if (session.getStatus().equals("inactive"))
+                return;
+
+            if (session.getExpectedEnd().isAfter(OffsetDateTime.now())) {
+                scheduleForId(sessionId, session.getExpectedEnd());
+            }
+
+            // TODO: buffer time?
+            try {
+                alarmOperation.execute(sessionId);
+            } catch (SessionOperationException e) {
+                throw new RuntimeException(e);
             }
         }
 

@@ -6,28 +6,24 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Component
-public class CheckInOperation {
+public class CheckOutOperation {
 
     private final SessionRepository sessionRepository;
-    private final CheckAndAlarmTaskScheduler checkAndAlarmTaskScheduler;
     private final UpdatePusher updatePusher;
 
-    public CheckInOperation(SessionRepository sessionRepository, CheckAndAlarmTaskScheduler checkAndAlarmTaskScheduler,
-                            UpdatePusher updatePusher) {
+    public CheckOutOperation(SessionRepository sessionRepository, UpdatePusher updatePusher) {
         this.sessionRepository = sessionRepository;
-        this.checkAndAlarmTaskScheduler = checkAndAlarmTaskScheduler;
         this.updatePusher = updatePusher;
     }
+
 
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
-        session.setStatus("active");
-        session.setStartedAt(OffsetDateTime.now());
+        session.setStatus("inactive");
+        session.setEndedAt(OffsetDateTime.now());
         sessionRepository.save(session);
         updatePusher.notifyUpdates(session.getAdminId());
-
-        checkAndAlarmTaskScheduler.scheduleForId(id, session.getExpectedEnd());
     }
 
 }
