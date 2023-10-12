@@ -22,6 +22,12 @@ public class CheckInOperation {
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
+        if (session.getStatus() != Session.Status.SCHEDULED)
+            throw new SessionOperationException("Invalid status: " + session.getStatus());
+
+        if (session.getExpectedEnd().isBefore(OffsetDateTime.now()))
+            throw new SessionOperationException("Expected end is in the past: " + session.getExpectedEnd());
+
         session.setStatus(Session.Status.IN_PROGRESS);
         session.setStartedAt(OffsetDateTime.now());
         sessionRepository.save(session);

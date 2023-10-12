@@ -16,10 +16,12 @@ public class CheckOutOperation {
         this.updatePusher = updatePusher;
     }
 
-
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
+        if (session.getStatus() != Session.Status.IN_PROGRESS)
+            throw new SessionOperationException("Invalid status: " + session.getStatus());
+
         session.setStatus(Session.Status.COMPLETED);
         session.setEndedAt(OffsetDateTime.now());
         sessionRepository.save(session);
