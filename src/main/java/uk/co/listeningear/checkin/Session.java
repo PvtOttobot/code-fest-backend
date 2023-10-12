@@ -2,6 +2,8 @@ package uk.co.listeningear.checkin;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
@@ -15,6 +17,7 @@ import java.util.stream.Stream;
 public class Session {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigDecimal id;
 
     @Column(name = "therapist_id")

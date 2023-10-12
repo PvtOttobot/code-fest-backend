@@ -8,34 +8,34 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Component
-public class CheckAndAlarmTaskScheduler {
+public class CheckAndAlertTaskScheduler {
 
     private final SessionRepository sessionRepository;
-    private final AlarmOperation alarmOperation;
+    private final AlertOperation alertOperation;
     private final TaskScheduler checkAndAlarmTaskScheduler;
     private final long minutesAlarmBuffer;
 
-    public CheckAndAlarmTaskScheduler(SessionRepository sessionRepository,
-                                      AlarmOperation alarmOperation,
+    public CheckAndAlertTaskScheduler(SessionRepository sessionRepository,
+                                      AlertOperation alertOperation,
                                       TaskScheduler checkAndAlarmTaskScheduler,
                                       @Value("${alarm.buffer.mins:0}") long minutesAlarmBuffer) {
 
         this.sessionRepository = sessionRepository;
-        this.alarmOperation = alarmOperation;
+        this.alertOperation = alertOperation;
         this.checkAndAlarmTaskScheduler = checkAndAlarmTaskScheduler;
         this.minutesAlarmBuffer = minutesAlarmBuffer;
     }
 
     public void scheduleForId(BigDecimal id, OffsetDateTime triggerTime) {
-        checkAndAlarmTaskScheduler.schedule(new CheckAndAlarmTask(id),
+        checkAndAlarmTaskScheduler.schedule(new CheckAndAlertTask(id),
                                             triggerTime.plusMinutes(minutesAlarmBuffer).toInstant());
     }
 
-    private class CheckAndAlarmTask implements Runnable {
+    private class CheckAndAlertTask implements Runnable {
 
         private final BigDecimal sessionId;
 
-        private CheckAndAlarmTask(BigDecimal sessionId) {
+        private CheckAndAlertTask(BigDecimal sessionId) {
             this.sessionId = sessionId;
         }
 
@@ -51,7 +51,7 @@ public class CheckAndAlarmTaskScheduler {
             }
 
             try {
-                alarmOperation.execute(sessionId);
+                alertOperation.execute(sessionId);
             } catch (SessionOperationException e) {
                 throw new RuntimeException(e);
             }

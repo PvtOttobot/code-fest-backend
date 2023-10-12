@@ -9,13 +9,13 @@ import java.time.OffsetDateTime;
 public class CheckInOperation {
 
     private final SessionRepository sessionRepository;
-    private final CheckAndAlarmTaskScheduler checkAndAlarmTaskScheduler;
+    private final CheckAndAlertTaskScheduler checkAndAlertTaskScheduler;
     private final UpdatePusher updatePusher;
 
-    public CheckInOperation(SessionRepository sessionRepository, CheckAndAlarmTaskScheduler checkAndAlarmTaskScheduler,
+    public CheckInOperation(SessionRepository sessionRepository, CheckAndAlertTaskScheduler checkAndAlertTaskScheduler,
                             UpdatePusher updatePusher) {
         this.sessionRepository = sessionRepository;
-        this.checkAndAlarmTaskScheduler = checkAndAlarmTaskScheduler;
+        this.checkAndAlertTaskScheduler = checkAndAlertTaskScheduler;
         this.updatePusher = updatePusher;
     }
 
@@ -27,7 +27,7 @@ public class CheckInOperation {
         sessionRepository.save(session);
         updatePusher.notifyUpdates(session.getAdminId());
 
-        checkAndAlarmTaskScheduler.scheduleForId(id, session.getExpectedEnd());
+        checkAndAlertTaskScheduler.scheduleForId(id, session.getExpectedEnd());
     }
 
 }
