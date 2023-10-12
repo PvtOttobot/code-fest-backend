@@ -25,7 +25,7 @@ public class ExtendOperation {
 
         session.setExpectedEnd(session.getExpectedEnd().plusMinutes(minutesToExtend));
         sessionRepository.save(session);
-        updatePusher.notifyUpdates(session.getAdminId());
+        updatePusher.notifyUpdates(session.getAdmin().getId());
     }
 
 }

@@ -25,7 +25,7 @@ public class CheckOutOperation {
         session.setStatus(Session.Status.COMPLETED);
         session.setEndedAt(OffsetDateTime.now());
         sessionRepository.save(session);
-        updatePusher.notifyUpdates(session.getAdminId());
+        updatePusher.notifyUpdates(session.getAdmin().getId());
     }
 
 }

@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -16,8 +18,9 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigDecimal id;
 
-    @Column(name = "session_id")
-    private BigDecimal sessionId;
+    @JoinColumn(name = "session_id")
+    @ManyToOne
+    private Session session;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
@@ -25,8 +28,8 @@ public class Alert {
     @Column(name = "resolved_at")
     private OffsetDateTime resolvedAt;
 
-    public Alert(BigDecimal sessionId) {
-        this.sessionId = sessionId;
+    public Alert(Session session) {
+        this.session = session;
         this.createdAt = OffsetDateTime.now();
     }
 
@@ -38,12 +41,12 @@ public class Alert {
         this.id = id;
     }
 
-    public BigDecimal getSessionId() {
-        return sessionId;
+    public Session getSession() {
+        return session;
     }
 
-    public void setSessionId(BigDecimal sessionId) {
-        this.sessionId = sessionId;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public OffsetDateTime getCreatedAt() {
@@ -64,10 +67,11 @@ public class Alert {
 
     @Override
     public String toString() {
-        return "Alarm{" +
+        return "Alert{" +
                "id=" + id +
-               ", sessionId=" + sessionId +
+               ", session=" + session +
                ", createdAt=" + createdAt +
+               ", resolvedAt=" + resolvedAt +
                '}';
     }
 

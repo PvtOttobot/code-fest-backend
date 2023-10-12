@@ -31,7 +31,7 @@ public class CheckInOperation {
         session.setStatus(Session.Status.IN_PROGRESS);
         session.setStartedAt(OffsetDateTime.now());
         sessionRepository.save(session);
-        updatePusher.notifyUpdates(session.getAdminId());
+        updatePusher.notifyUpdates(session.getAdmin().getId());
 
         checkAndAlertTaskScheduler.scheduleForId(id, session.getExpectedEnd());
     }

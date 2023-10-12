@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -21,11 +23,13 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigDecimal id;
 
-    @Column(name = "therapist_id")
-    private BigDecimal therapistId;
+    @JoinColumn(name = "therapist_id")
+    @ManyToOne
+    private User therapist;
 
-    @Column(name = "admin_id")
-    private BigDecimal adminId;
+    @JoinColumn(name = "admin_id")
+    @ManyToOne
+    private User admin;
 
     @Column(name = "status")
     private String statusValue;
@@ -47,28 +51,28 @@ public class Session {
     @Column(name = "ended_at")
     private OffsetDateTime endedAt;
 
+    public User getTherapist() {
+        return therapist;
+    }
+
+    public void setTherapist(User therapist) {
+        this.therapist = therapist;
+    }
+
+    public User getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(User admin) {
+        this.admin = admin;
+    }
+
     public BigDecimal getId() {
         return id;
     }
 
     public void setId(BigDecimal id) {
         this.id = id;
-    }
-
-    public BigDecimal getTherapistId() {
-        return therapistId;
-    }
-
-    public void setTherapistId(BigDecimal therapistId) {
-        this.therapistId = therapistId;
-    }
-
-    public BigDecimal getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(BigDecimal adminId) {
-        this.adminId = adminId;
     }
 
     public Status getStatus() {
@@ -138,9 +142,10 @@ public class Session {
     public String toString() {
         return "Session{" +
                "id=" + id +
-               ", therapistId=" + therapistId +
-               ", adminId=" + adminId +
-               ", status='" + status + '\'' +
+               ", therapist=" + therapist +
+               ", admin=" + admin +
+               ", statusValue='" + statusValue + '\'' +
+               ", status=" + status +
                ", location='" + location + '\'' +
                ", expectedStart=" + expectedStart +
                ", expectedEnd=" + expectedEnd +

@@ -22,9 +22,9 @@ public class AlertOperation {
     // @Override
     public void execute(BigDecimal id) throws SessionOperationException {
         Session session = sessionRepository.getReferenceById(id);
-        Alert alert = new Alert(id);
+        Alert alert = new Alert(session);
         alertRepository.save(alert);
-        updatePusher.notifyUpdates(session.getAdminId());
+        updatePusher.notifyUpdates(session.getAdmin().getId());
     }
 
 }
