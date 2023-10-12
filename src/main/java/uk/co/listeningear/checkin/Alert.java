@@ -28,6 +28,8 @@ public class Alert {
     @Column(name = "resolved_at")
     private OffsetDateTime resolvedAt;
 
+    public Alert() {}
+
     public Alert(Session session) {
         this.session = session;
         this.createdAt = OffsetDateTime.now();
